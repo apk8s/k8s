@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo
+  namespace: the-platform
+spec:
+  type: NodePort
+  ports:
+    - name: tcp
+      port: 30000
+      targetPort: 1025
+      protocol: TCP
+      nodePort: 30000
+  selector:
+    app: echo

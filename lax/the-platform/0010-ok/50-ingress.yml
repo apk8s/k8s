@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ok
+  namespace: the-platform
+  labels:
+    app: ok
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: ok.platform.apk8s.dev
+      http:
+        paths:
+          - backend:
+              serviceName: ok
+              servicePort: 8080
+            path: /
+  tls:
+    - hosts:
+        - ok.platform.apk8s.dev
+      secretName: the-platform-tls
