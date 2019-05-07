@@ -23,7 +23,7 @@ network:
     ens7:
       mtu: 1450
       dhcp4: no
-      addresses: [10.5.96.3/20]
+      addresses: [10.5.96.7/20]
 EOF
 ```
 
@@ -133,7 +133,7 @@ apt-mark hold kubelet kubeadm kubectl
 
 Advertise the API server to other nodes on the private IP. Instruct Kubernetes to include the public IP in the certificate for remote access from the public network.
 ```bash
-kubeadm init --apiserver-advertise-address=10.5.96.3 --apiserver-cert-extra-sans=207.246.107.84
+kubeadm init --apiserver-advertise-address=10.5.96.3 --apiserver-cert-extra-sans=45.63.55.184
 ```
 
 ### Create Overlay Network
@@ -146,7 +146,7 @@ Description=Route weave through private network.
 [Service]
 Type=oneshot
 User=root
-ExecStart=/sbin/ip route add 10.96.0.0/16 dev ens7 src 10.5.96.5
+ExecStart=/sbin/ip route add 10.96.0.0/16 dev ens7 src 10.5.96.7
 
 [Install]
 WantedBy=multi-user.target
