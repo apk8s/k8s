@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rxtx-ts
+  namespace: the-platform
+  labels:
+    app: rxtx-ts
+spec:
+  serviceName: rxtx-ts
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: rxtx-ts
+  template:
+    metadata:
+      labels:
+        app: rxtx-ts
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - rxtx-ts
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: rxtx-ts
+          image: txn2/rxtx:2.0.1
+          imagePullPolicy: IfNotPresent
+          args: [
+            "--ingest=http://rtbeat-ts:80/in",
+            "--port=80",
+            "--path=/data",
+            "--interval=5",
+            "--batch=4000",
+            "--maxq=500000"]
+          volumeMounts:
+            - name: rxtx-ts-data-volume
+              mountPath: /data
+          ports:
+            - name: rxtx
+              containerPort: 80
+  volumeClaimTemplates:
+    - metadata:
+        name: rxtx-ts-data-volume
+      spec:
+        storageClassName: rook-ceph-block
+        accessModes: [ ReadWriteOnce ]
+        resources:
+          requests:
+            storage: 100Mi # enough to hold maxq
